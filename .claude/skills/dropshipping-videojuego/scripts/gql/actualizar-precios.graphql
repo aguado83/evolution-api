@@ -1,0 +1,16 @@
+# Pone el precio de venta en las variantes de un producto (todas a la vez).
+# Variables: { "productId": "gid://shopify/Product/...", "variants": [ { "id": "gid://shopify/ProductVariant/...", "price": "49.90" } ] }
+mutation ActualizarPrecios($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+  productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+    productVariants {
+      id
+      title
+      price
+      compareAtPrice
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

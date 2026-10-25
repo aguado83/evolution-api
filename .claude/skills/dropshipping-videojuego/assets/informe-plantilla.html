@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Informe de productos</title>
+<!-- Plantilla fija del informe de productos de la skill dropshipping-videojuego.
+     NO se edita a mano: scripts/montar-informe.mjs mete los datos en el bloque <script id="datos"> y las fotos dentro del archivo.
+     Sin el nombre del proveedor en ningún texto: «el proveedor» (como en la web del juego).
+     Nunca el origen del producto ni su ID: ni en las casillas ni en la ficha (montar-informe.mjs los quita).
+     Mismo diseño que la web «Trata el dropshipping como un videojuego» (recursos.skilio.com/dropshipping-videojuego/). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Pixelify+Sans:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #0b0e1f; --night-2: #151a36; --night-3: #1d2347;
+  --frame: #2b3163; --frame-2: #3a4280;
+  --ink: #f1ece1; --ink-2: #bdb8c9; --ink-3: #7f7c9c;
+  --gold: #f2c14e; --gold-2: #b8892a; --claude: #d97757;
+  --green: #5bbf5b; --red: #e5484d; --blue: #5fb3e6; --purple: #8f6bff;
+  --f-title: 'Press Start 2P', ui-monospace, monospace;
+  --f-num: 'Jersey 15', ui-monospace, monospace;
+  --f-text: 'Pixelify Sans', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--night); }
+body { min-height: 100vh; background: var(--night); color: var(--ink); font: 400 15px/1.45 var(--f-text); -webkit-font-smoothing: none; }
+button, input, select { font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+/* Cielo de píxeles */
+.sky { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(2px 2px at 12% 18%, #3a4280 50%, transparent 51%), radial-gradient(2px 2px at 78% 12%, #f2c14e 50%, transparent 51%),
+    radial-gradient(2px 2px at 44% 32%, #3a4280 50%, transparent 51%), radial-gradient(2px 2px at 88% 46%, #5fb3e6 50%, transparent 51%),
+    radial-gradient(2px 2px at 22% 64%, #3a4280 50%, transparent 51%), radial-gradient(2px 2px at 64% 78%, #8f6bff 50%, transparent 51%),
+    linear-gradient(180deg, #0b0e1f 0%, #141a3d 60%, #1a1f48 100%); }
+
+/* ---------- Cabecera: pantalla de título ---------- */
+.top { padding: 34px 20px 26px; text-align: center; border-bottom: 4px solid var(--ink); box-shadow: inset 0 -3px 0 #000, inset 0 -6px 0 var(--frame-2); background: rgba(5, 6, 15, .55); }
+.kicker { font: 400 18px/1 var(--f-num); letter-spacing: .06em; color: var(--claude); }
+.title { margin: 14px 0 16px; font: 400 clamp(20px, 4.2vw, 40px)/1.35 var(--f-title); color: var(--gold); text-shadow: 3px 3px 0 var(--gold-2), 6px 6px 0 #000; }
+.cats { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px; }
+.cat { padding: 3px 10px 2px; font: 400 18px/1.1 var(--f-num); color: #000; background: var(--gold); border: 3px solid #000; box-shadow: 3px 3px 0 #000; }
+.hud { display: grid; grid-template-columns: repeat(5, minmax(0, 150px)); justify-content: center; gap: 12px; }
+.kpi { padding: 10px 8px 9px; background: #05060f; border: 3px solid #000; box-shadow: 0 0 0 3px var(--frame-2), 4px 4px 0 3px #000; }
+.kpi b { display: block; font: 400 34px/1 var(--f-num); color: var(--gold); }
+.kpi span { display: block; margin-top: 4px; font: 400 15px/1.1 var(--f-num); color: var(--ink-2); letter-spacing: .03em; }
+.kpi--g b { color: var(--green); }
+.kpi--b b { color: var(--blue); }
+
+/* ---------- Controles ---------- */
+.wrap { max-width: 1240px; margin: 0 auto; padding: 22px 18px 40px; }
+.bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.search { flex: 1 1 260px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: #000; border: 3px solid var(--frame-2); }
+.search:focus-within { border-color: var(--gold); }
+.search input { flex: 1; min-width: 0; height: 42px; background: transparent; border: 0; outline: none; font-size: 15px; }
+.search input::placeholder { color: var(--ink-3); }
+.search i { width: 12px; height: 12px; border: 3px solid var(--ink-3); flex-shrink: 0; }
+select { height: 48px; padding: 0 12px; font: 400 19px/1 var(--f-num); background: #000; border: 3px solid var(--frame-2); cursor: pointer; }
+.seg { display: flex; border: 3px solid var(--frame-2); }
+.seg button { padding: 0 14px; font: 400 19px/1 var(--f-num); color: var(--ink-3); background: #05060f; border: 0; cursor: pointer; }
+.seg button[aria-pressed="true"] { color: #000; background: var(--gold); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.chip { padding: 5px 12px 4px; font: 400 18px/1 var(--f-num); color: var(--ink-2); background: #05060f; border: 3px solid var(--frame-2); cursor: pointer; }
+.chip:hover { border-color: var(--gold); color: var(--ink); }
+.chip[aria-pressed="true"] { color: #000; background: var(--gold); border-color: #000; }
+.chip small { font-size: 15px; opacity: .7; margin-left: 4px; }
+.count { margin: 14px 0 12px; font: 400 18px/1 var(--f-num); color: var(--ink-3); }
+
+/* ---------- Tarjetas ---------- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
+.card { position: relative; display: flex; flex-direction: column; background: var(--night-2); border: 3px solid #000; box-shadow: 0 0 0 3px var(--frame-2), 5px 5px 0 3px #000; cursor: pointer; transition: transform .1s steps(2); }
+.card:hover { transform: translateY(-3px); box-shadow: 0 0 0 3px var(--gold), 5px 8px 0 3px #000; }
+.card:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+.ph { position: relative; aspect-ratio: 1; background: #fff; border-bottom: 3px solid #000; overflow: hidden; }
+.ph img { width: 100%; height: 100%; object-fit: cover; }
+.rank { position: absolute; left: 8px; top: 8px; padding: 2px 7px 1px; font: 400 22px/1 var(--f-num); color: #000; background: var(--gold); border: 3px solid #000; }
+.score { position: absolute; right: 8px; top: 8px; min-width: 50px; padding: 3px 6px 2px; text-align: center; font: 400 26px/1 var(--f-num); color: #000; border: 3px solid #000; box-shadow: 2px 2px 0 #000; }
+.score small { display: block; font-size: 12px; line-height: 1; letter-spacing: .04em; }
+.s-hi { background: var(--green); } .s-mid { background: var(--gold); } .s-lo { background: var(--claude); }
+.body { display: flex; flex-direction: column; gap: 8px; flex: 1; padding: 12px 12px 12px; }
+.ccat { font: 400 16px/1 var(--f-num); color: var(--claude); letter-spacing: .03em; }
+.name { font: 600 17px/1.2 var(--f-text); color: var(--ink); }
+.prob { font-size: 14px; line-height: 1.35; color: var(--ink-2); }
+.nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: auto; }
+.n { padding: 5px 4px 4px; text-align: center; background: #05060f; border: 2px solid var(--frame); }
+.n span { display: block; font: 400 13px/1 var(--f-num); color: var(--ink-3); letter-spacing: .04em; }
+.n b { display: block; margin-top: 2px; font: 400 22px/1 var(--f-num); color: var(--ink); }
+.n small { display: block; font: 400 13px/1 var(--f-num); color: var(--ink-3); }
+.n--gold b { color: var(--gold); } .n--green b { color: var(--green); }
+.tags { display: flex; justify-content: space-between; align-items: center; gap: 6px; font: 400 16px/1 var(--f-num); color: var(--ink-2); }
+.meter { display: inline-flex; gap: 2px; vertical-align: -1px; }
+.meter i { width: 8px; height: 12px; background: var(--frame); }
+.btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 6px 8px 5px; font: 400 16px/1 var(--f-num); letter-spacing: .03em; color: #000; background: var(--gold); border: 3px solid #000; box-shadow: inset -2px -2px 0 rgba(0, 0, 0, .28), inset 2px 2px 0 rgba(255, 255, 255, .32), 3px 3px 0 #000; cursor: pointer; text-decoration: none; }
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translate(3px, 3px); box-shadow: inset 2px 2px 0 rgba(0, 0, 0, .3); }
+.btn--ghost { color: var(--ink); background: var(--night-3); box-shadow: inset 0 0 0 2px var(--frame-2), 3px 3px 0 #000; }
+.btn--claude { background: var(--claude); }
+.btn--big { min-height: 44px; font-size: 19px; }
+
+/* ---------- Tabla ---------- */
+.tablewrap { overflow-x: auto; border: 3px solid #000; box-shadow: 0 0 0 3px var(--frame-2), 5px 5px 0 3px #000; background: var(--night-2); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { position: sticky; top: 0; padding: 10px 8px; text-align: left; font: 400 17px/1 var(--f-num); color: var(--gold); background: #05060f; border-bottom: 3px solid var(--frame-2); cursor: pointer; white-space: nowrap; }
+td { padding: 8px; border-bottom: 2px solid var(--frame); vertical-align: middle; }
+td.num { font: 400 19px/1 var(--f-num); white-space: nowrap; }
+tr:hover td { background: var(--night-3); cursor: pointer; }
+.tprod { display: flex; align-items: center; gap: 10px; min-width: 220px; }
+.tprod img { width: 44px; height: 44px; object-fit: cover; border: 2px solid #000; background: #fff; }
+.tprod b { font-weight: 600; }
+.tbtn { min-height: 30px; padding: 4px 8px 3px; font-size: 15px; }
+
+/* ---------- Ficha ampliada ---------- */
+.ovl { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(5, 6, 15, .86); }
+.ovl[hidden] { display: none; }
+.modal { position: relative; width: min(980px, 100%); max-height: calc(100vh - 32px); overflow: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); background: var(--night-2); border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px #000, 8px 8px 0 #000; }
+.x { position: absolute; right: 10px; top: 10px; z-index: 2; width: 42px; height: 42px; font: 400 28px/1 var(--f-num); color: var(--ink); background: #000; border: 3px solid var(--ink); cursor: pointer; }
+.x:hover { color: var(--gold); border-color: var(--gold); }
+.gal { padding: 16px; border-right: 3px solid #000; }
+.main { position: relative; aspect-ratio: 1; background: #fff; border: 3px solid #000; }
+.main img { width: 100%; height: 100%; object-fit: contain; }
+.nav { position: absolute; top: 50%; translate: 0 -50%; width: 40px; height: 40px; font: 400 18px/1 var(--f-num); color: #000; background: var(--gold); border: 3px solid #000; cursor: pointer; }
+.nav--p { left: 8px; } .nav--n { right: 8px; }
+.thumbs { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; }
+.thumbs img { width: 56px; height: 56px; flex-shrink: 0; object-fit: cover; background: #fff; border: 3px solid var(--frame); cursor: pointer; opacity: .65; }
+.thumbs img.on { border-color: var(--gold); opacity: 1; }
+.info { display: flex; flex-direction: column; gap: 12px; padding: 18px 18px 18px; }
+.mtop { display: flex; align-items: center; gap: 10px; padding-right: 48px; }
+.mtop .score { position: static; }
+.mname { font: 600 21px/1.2 var(--f-text); }
+.mtitle { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; background: #05060f; border: 2px dashed var(--frame-2); }
+.mtitle p { flex: 1; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.mtitle p span { display: block; font: 400 14px/1 var(--f-num); color: var(--ink-3); margin-bottom: 3px; }
+.mgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.mgrid .n b { font-size: 24px; }
+.bars { display: grid; gap: 6px; }
+.barr { display: grid; grid-template-columns: 96px minmax(0, 1fr) 32px; align-items: center; gap: 8px; font: 400 16px/1 var(--f-num); color: var(--ink-2); }
+.track { height: 14px; display: flex; gap: 2px; padding: 2px; background: #000; border: 2px solid var(--frame-2); }
+.track i { flex: 1; background: var(--frame); }
+.barr b { font-weight: 400; color: var(--ink); text-align: right; }
+.mbtns { display: flex; flex-wrap: wrap; gap: 8px; }
+.mbtns .btn { flex: 1 1 150px; }
+.hint { font: 400 15px/1.3 var(--f-num); color: var(--ink-3); }
+
+/* ---------- Pie ---------- */
+.foot { margin-top: 30px; padding: 14px 16px; background: #05060f; border: 2px dashed var(--frame-2); font-size: 13.5px; color: var(--ink-3); line-height: 1.5; }
+.foot b { color: var(--ink-2); font-weight: 600; }
+.foot a { color: var(--gold); }
+.toast { position: fixed; left: 50%; bottom: 24px; z-index: 60; translate: -50% 0; padding: 10px 16px 9px; font: 400 20px/1 var(--f-num); color: #000; background: var(--green); border: 3px solid #000; box-shadow: 4px 4px 0 #000; opacity: 0; pointer-events: none; transition: opacity .2s steps(2); }
+.toast.on { opacity: 1; }
+.manual { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 16px; background: rgba(5, 6, 15, .9); }
+.manual[hidden] { display: none; }
+.manual div { width: min(560px, 100%); padding: 16px; background: var(--night-2); border: 4px solid var(--ink); box-shadow: 8px 8px 0 #000; }
+.manual p { margin-bottom: 8px; font: 400 18px/1.2 var(--f-num); color: var(--gold); }
+.manual textarea { width: 100%; height: 200px; padding: 8px; font: 13px/1.4 ui-monospace, monospace; color: var(--ink); background: #000; border: 3px solid var(--frame-2); }
+.manual .btn { margin-top: 10px; }
+.empty { padding: 30px; text-align: center; color: var(--ink-3); font: 400 20px/1.3 var(--f-num); }
+
+@media (max-width: 760px) {
+  .top { padding: 22px 12px 18px; }
+  .hud { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpi b { font-size: 28px; }
+  .wrap { padding: 16px 12px 30px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+  .modal { grid-template-columns: minmax(0, 1fr); }
+  .gal { border-right: 0; border-bottom: 3px solid #000; }
+  .main { aspect-ratio: 4 / 3; }
+}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+<header class="top">
+  <p class="kicker">DROPSHIPPING COMO UN VIDEOJUEGO · TU INFORME</p>
+  <h1 class="title">INFORME DE<br>PRODUCTOS</h1>
+  <div class="cats" id="cats"></div>
+  <div class="hud" id="hud"></div>
+</header>
+<main class="wrap">
+  <div class="bar">
+    <label class="search"><i aria-hidden="true"></i><span class="sr">Buscar</span><input id="q" type="search" placeholder="Buscar producto…" autocomplete="off"></label>
+    <label class="sr" for="sort">Ordenar</label>
+    <select id="sort">
+      <option value="nota">ORDEN: NOTA</option>
+      <option value="beneficio">ORDEN: BENEFICIO</option>
+      <option value="mult">ORDEN: MARGEN (×)</option>
+      <option value="pedidos">ORDEN: PEDIDOS</option>
+      <option value="envio_dias">ORDEN: ENVÍO MÁS RÁPIDO</option>
+      <option value="coste">ORDEN: COSTE MÁS BAJO</option>
+    </select>
+    <div class="seg" role="group" aria-label="Vista"><button type="button" id="v-cards" aria-pressed="true">TARJETAS</button><button type="button" id="v-table" aria-pressed="false">TABLA</button></div>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="Filtrar por tipo"></div>
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
+  <div class="tablewrap" id="tablewrap" hidden>
+    <table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table>
+  </div>
+  <footer class="foot" id="foot"></footer>
+</main>
+<div class="ovl" id="ovl" hidden><div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Ficha del producto"></div></div>
+<div class="manual" id="manual" hidden><div><p>CÓPIALO A MANO (CTRL + C)</p><textarea id="manual-t" readonly></textarea><button class="btn" type="button" id="manual-x">LISTO</button></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script id="datos" type="application/json">__DATOS__</script>
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const num = (v, d = 2) => (v == null || isNaN(v) ? '—' : Number(v).toFixed(d).replace('.', ','));
+  const usd = (v) => (v == null || isNaN(v) ? '—' : '$' + num(v));
+  const miles = (v) => (v == null ? '—' : Number(v).toLocaleString('es-ES'));
+  const clamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
+
+  let D;
+  try { D = JSON.parse($('#datos').textContent); } catch (e) { D = null; }
+  if (!D || !Array.isArray(D.productos) || !D.productos.length) {
+    $('#grid').innerHTML = '<p class="empty">Sin datos todavía: ejecuta scripts/montar-informe.mjs con tu informe-datos.json.</p>';
+    return;
+  }
+
+  /* Nota (0-100), siempre con la misma fórmula:
+     24 % margen · 24 % ventas · 20 % competencia · 14 % envío · 18 % valor percibido */
+  const P = D.productos.map((p, i) => {
+    const coste = +p.coste || 0, envio = +p.envio || 0, venta = +p.venta || 0;
+    const mult = coste ? venta / coste : 0;
+    const s = {
+      margen: clamp(mult / 5 * 100),
+      ventas: clamp(Math.log10((+p.pedidos || 0) + 1) / Math.log10(5000) * 100),
+      competencia: clamp(100 - (+p.competidores || 0) * 8 - (+p.saturacion || 0) * 0.6),
+      envio: clamp(100 - Math.max(0, (p.envio_dias == null ? 20 : +p.envio_dias) - 5) * 5.3),
+      valor: clamp(p.valor == null ? 60 : +p.valor)
+    };
+    const nota = Math.round((0.24 * s.margen + 0.24 * s.ventas + 0.2 * s.competencia + 0.14 * s.envio + 0.18 * s.valor) * 10) / 10;
+    const imgs = [p.imagen].concat(p.imagenes || []).filter(Boolean).filter((u, k, a) => a.indexOf(u) === k);
+    return Object.assign({}, p, { i, coste, envio, venta, mult: Math.round(mult * 10) / 10, beneficio: Math.round((venta - coste - envio) * 100) / 100, s, nota, imgs,
+      nombre: p.nombre || String(p.titulo || '').slice(0, 40) });
+  });
+  P.sort((a, b) => b.nota - a.nota).forEach((p, k) => { p.rank = k + 1; });
+
+  const avg = (k) => P.reduce((t, p) => t + (+p[k] || 0), 0) / P.length;
+  const cats = (D.categorias_es && D.categorias_es.length ? D.categorias_es : D.categorias || []);
+  $('#cats').innerHTML = cats.map((c) => `<span class="cat">${esc(c)}</span>`).join('');
+  $('#hud').innerHTML = [
+    ['', P.length, 'PRODUCTOS'],
+    ['', miles(D.analizados || P.length), 'ANALIZADOS'],
+    ['kpi--g', '×' + num(avg('mult'), 1), 'MARGEN MEDIO'],
+    ['kpi--g', usd(avg('beneficio')).replace(/,\d\d$/, ''), 'BENEFICIO / UD.'],
+    ['kpi--b', Math.round(avg('envio_dias')) + ' D', 'ENVÍO MEDIO']
+  ].map(([c, v, l]) => `<div class="kpi ${c}"><b>${esc(v)}</b><span>${l}</span></div>`).join('');
+  /* El título del documento es siempre «Informe de productos» (las categorías van en la cabecera) */
+
+  const sCls = (n) => (n >= 80 ? 's-hi' : n >= 65 ? 's-mid' : 's-lo');
+  const meter = (p) => {
+    const lvl = Math.max(0, Math.min(5, Math.round((+p.competidores || 0) / 8 * 2.5 + (+p.saturacion || 0) / 60 * 2.5)));
+    const col = lvl <= 2 ? 'var(--green)' : lvl <= 3 ? 'var(--gold)' : 'var(--red)';
+    let h = '';
+    for (let k = 0; k < 5; k++) h += `<i style="${k < lvl ? 'background:' + col : ''}"></i>`;
+    return `<span class="meter" title="Competencia: ${esc(p.competidores || 0)} rivales · saturación ${esc(p.saturacion || 0)} %">${h}</span>`;
+  };
+  const img = (p, k = 0) => p.imgs[k] || '';
+
+  /* ---------- Lo que se copia: la ficha (la web del juego la pega en el inventario, misión 2.4) ---------- */
+  const envioA = D.envio_a || '';
+  const ficha = (p) => [
+    'FICHA · DROPSHIPPING COMO UN VIDEOJUEGO',
+    `Nombre: ${p.nombre}`,
+    `Título original: ${p.titulo}`,
+    `Coste: ${num(p.coste)}`,
+    `Envío: ${num(p.envio)}`,
+    envioA ? `Destino del envío: ${envioA}` : '',
+    `Precio de venta: ${num(p.venta)}`,
+    p.id ? `ID de catálogo: ${p.id}` : '',
+    p.enlace ? `Enlace: ${p.enlace}` : '',
+    /* La foto principal, con su enlace original (la web del juego la enseña en el inventario) */
+    /^https?:\/\//.test(p.foto || '') ? `Foto: ${p.foto}` : ''
+  ].filter(Boolean).join('\n');
+  const toast = $('#toast');
+  let tt = null;
+  function say(t) { toast.textContent = t; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('on'), 1600); }
+  function manual(text) { $('#manual-t').value = text; $('#manual').hidden = false; $('#manual-t').select(); }
+  function oldCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove();
+    return ok;
+  }
+  function copy(text, label) {
+    const done = () => say(label);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => (oldCopy(text) ? done() : manual(text)));
+    } else if (oldCopy(text)) done(); else manual(text);
+  }
+  $('#manual-x').addEventListener('click', () => { $('#manual').hidden = true; });
+  function doCopy(kind, p) {
+    copy(ficha(p), '¡FICHA COPIADA! PÉGALA EN TU INVENTARIO');
+  }
+
+  /* ---------- Filtros, orden y vista ---------- */
+  let q = '', sortKey = 'nota', cat = '', view = 'cards';
+  const asc = { envio_dias: 1, coste: 1 };
+  const kinds = [...new Set(P.map((p) => p.categoria).filter(Boolean))];
+  function chips() {
+    const all = [['', 'TODOS', P.length]].concat(kinds.map((k) => [k, k, P.filter((p) => p.categoria === k).length]));
+    $('#chips').innerHTML = all.map(([v, l, n]) => `<button type="button" class="chip" data-cat="${esc(v)}" aria-pressed="${v === cat}">${esc(l)}<small>${n}</small></button>`).join('');
+  }
+  function list() {
+    const t = q.trim().toLowerCase();
+    return P.filter((p) => (!cat || p.categoria === cat) && (!t || [p.nombre, p.titulo, p.categoria, p.problema].join(' ').toLowerCase().includes(t)))
+      .sort((a, b) => (asc[sortKey] ? (+a[sortKey] || 0) - (+b[sortKey] || 0) : (+b[sortKey] || 0) - (+a[sortKey] || 0)));
+  }
+  const card = (p) => `<article class="card" tabindex="0" data-i="${p.i}" aria-label="${esc(p.nombre)}">
+    <div class="ph"><img src="${esc(img(p))}" alt="" loading="lazy"><span class="rank">#${p.rank}</span><span class="score ${sCls(p.nota)}">${Math.round(p.nota)}<small>NOTA</small></span></div>
+    <div class="body">
+      <p class="ccat">${esc(p.categoria || '')}</p>
+      <h2 class="name">${esc(p.nombre)}</h2>
+      ${p.problema ? `<p class="prob">${esc(p.problema)}</p>` : ''}
+      <div class="nums">
+        <div class="n"><span>COSTE</span><b>${usd(p.coste)}</b><small>+${usd(p.envio)} envío</small></div>
+        <div class="n n--gold"><span>VENTA</span><b>${usd(p.venta)}</b><small>×${num(p.mult, 1)}</small></div>
+        <div class="n n--green"><span>BENEFICIO</span><b>${usd(p.beneficio)}</b><small>por venta</small></div>
+      </div>
+      <div class="tags"><span>${miles(p.pedidos || 0)} PEDIDOS</span><span>${meter(p)}</span><span>${p.envio_dias == null ? '—' : esc(p.envio_dias) + ' D'}</span></div>
+      <div class="btns"><button class="btn" type="button" data-copy="ficha">COPIAR FICHA</button></div>
+    </div>
+  </article>`;
+  const COLS = [['rank', '#'], ['nombre', 'PRODUCTO'], ['categoria', 'TIPO'], ['coste', 'COSTE'], ['venta', 'VENTA'], ['mult', '×'], ['beneficio', 'BENEFICIO'], ['pedidos', 'PEDIDOS'], ['competidores', 'COMPET.'], ['envio_dias', 'ENVÍO'], ['nota', 'NOTA'], ['', '']];
+  $('#thead').innerHTML = COLS.map(([k, l]) => `<th data-k="${k}">${l}</th>`).join('');
+  const row = (p) => `<tr data-i="${p.i}">
+    <td class="num" style="color:var(--gold)">#${p.rank}</td>
+    <td><div class="tprod"><img src="${esc(img(p))}" alt="" loading="lazy"><b>${esc(p.nombre)}</b></div></td>
+    <td style="color:var(--claude)">${esc(p.categoria || '')}</td>
+    <td class="num">${usd(p.coste)}</td><td class="num" style="color:var(--gold)">${usd(p.venta)}</td><td class="num">×${num(p.mult, 1)}</td>
+    <td class="num" style="color:var(--green)">${usd(p.beneficio)}</td><td class="num">${miles(p.pedidos || 0)}</td><td>${meter(p)}</td>
+    <td class="num">${p.envio_dias == null ? '—' : esc(p.envio_dias) + ' d'}</td><td class="num"><span class="score ${sCls(p.nota)}" style="position:static;display:inline-block;min-width:40px;font-size:20px">${Math.round(p.nota)}</span></td>
+    <td><button class="btn tbtn" type="button" data-copy="ficha">FICHA</button></td></tr>`;
+  function render() {
+    const L = list();
+    $('#count').textContent = `${L.length} ${L.length === 1 ? 'PRODUCTO' : 'PRODUCTOS'}`;
+    $('#grid').hidden = view !== 'cards';
+    $('#tablewrap').hidden = view !== 'table';
+    if (view === 'cards') $('#grid').innerHTML = L.map(card).join('') || '<p class="empty">Nada con ese filtro.</p>';
+    else $('#tbody').innerHTML = L.map(row).join('');
+  }
+  $('#q').addEventListener('input', (e) => { q = e.target.value; render(); });
+  $('#sort').addEventListener('change', (e) => { sortKey = e.target.value; render(); });
+  $('#v-cards').addEventListener('click', () => { view = 'cards'; $('#v-cards').setAttribute('aria-pressed', 'true'); $('#v-table').setAttribute('aria-pressed', 'false'); render(); });
+  $('#v-table').addEventListener('click', () => { view = 'table'; $('#v-table').setAttribute('aria-pressed', 'true'); $('#v-cards').setAttribute('aria-pressed', 'false'); render(); });
+  $('#chips').addEventListener('click', (e) => { const b = e.target.closest('[data-cat]'); if (!b) return; cat = b.dataset.cat; chips(); render(); });
+  $('#thead').addEventListener('click', (e) => { const th = e.target.closest('th[data-k]'); if (!th || !th.dataset.k || th.dataset.k === 'nombre' || th.dataset.k === 'categoria') return; sortKey = th.dataset.k === 'rank' ? 'nota' : th.dataset.k; render(); });
+  function onPick(e) {
+    const b = e.target.closest('[data-copy]');
+    const host = e.target.closest('[data-i]');
+    if (!host) return;
+    const p = P.find((x) => x.i === +host.dataset.i);
+    if (b) { e.stopPropagation(); doCopy(b.dataset.copy, p); return; }
+    open(p);
+  }
+  $('#grid').addEventListener('click', onPick);
+  $('#tbody').addEventListener('click', onPick);
+  $('#grid').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('card')) { e.preventDefault(); open(P.find((x) => x.i === +e.target.dataset.i)); } });
+
+  /* ---------- Ficha ampliada ---------- */
+  let cur = null, gi = 0;
+  const BARS = [['margen', 'MARGEN'], ['ventas', 'VENTAS'], ['competencia', 'POCA COMPETENCIA'], ['envio', 'ENVÍO RÁPIDO'], ['valor', 'VALOR PERCIBIDO']];
+  const bar = (v) => { let h = ''; for (let k = 0; k < 10; k++) h += `<i style="${k < Math.round(v / 10) ? 'background:' + (v >= 80 ? 'var(--green)' : v >= 60 ? 'var(--gold)' : 'var(--claude)') : ''}"></i>`; return h; };
+  function setImg(k) {
+    if (!cur || !cur.imgs.length) return;
+    gi = (k + cur.imgs.length) % cur.imgs.length;
+    $('#m-img').src = cur.imgs[gi];
+    document.querySelectorAll('.thumbs img').forEach((t, j) => t.classList.toggle('on', j === gi));
+  }
+  function open(p) {
+    if (!p) return;
+    cur = p; gi = 0;
+    $('#modal').innerHTML = `
+      <button class="x" type="button" data-x aria-label="Cerrar">×</button>
+      <div class="gal">
+        <div class="main"><img id="m-img" src="${esc(img(p))}" alt="${esc(p.nombre)}">${p.imgs.length > 1 ? '<button class="nav nav--p" type="button" data-g="-1" aria-label="Foto anterior">◀</button><button class="nav nav--n" type="button" data-g="1" aria-label="Foto siguiente">▶</button>' : ''}</div>
+        ${p.imgs.length > 1 ? `<div class="thumbs">${p.imgs.map((u, j) => `<img src="${esc(u)}" alt="" data-t="${j}" class="${j ? '' : 'on'}">`).join('')}</div>` : ''}
+      </div>
+      <div class="info">
+        <div class="mtop"><span class="rank" style="position:static">#${p.rank}</span><span class="score ${sCls(p.nota)}">${Math.round(p.nota)}<small>NOTA</small></span><p class="ccat">${esc(p.categoria || '')}</p></div>
+        <h2 class="mname">${esc(p.nombre)}</h2>
+        ${p.problema ? `<p class="prob">${esc(p.problema)}</p>` : ''}
+        <div class="mtitle"><p><span>TÍTULO ORIGINAL</span>${esc(p.titulo)}</p></div>
+        <div class="mgrid">
+          <div class="n"><span>COSTE</span><b>${usd(p.coste)}</b><small>+${usd(p.envio)} envío</small></div>
+          <div class="n n--gold"><span>VENTA</span><b>${usd(p.venta)}</b><small>×${num(p.mult, 1)}</small></div>
+          <div class="n n--green"><span>BENEFICIO</span><b>${usd(p.beneficio)}</b><small>por venta</small></div>
+          <div class="n"><span>PEDIDOS</span><b>${miles(p.pedidos || 0)}</b><small>${meter(p)}</small></div>
+          <div class="n"><span>ENVÍO</span><b>${p.envio_dias == null ? '—' : esc(p.envio_dias) + ' D'}</b><small>desde ${esc(p.almacen || '—')}${envioA ? ' · a ' + esc(envioA) : ''}</small></div>
+          <div class="n"><span>COMPETENCIA</span><b>${p.competidores == null ? '—' : miles(p.competidores)}</b><small>${p.competidores == null ? 'sin datos' : p.competidores === 0 ? 'nadie lo vende aún' : p.competidores === 1 ? 'tienda lo vende' : 'tiendas lo venden'}</small></div>
+        </div>
+        <div class="bars">${BARS.map(([k, l]) => `<div class="barr"><span>${l}</span><div class="track">${bar(p.s[k])}</div><b>${p.s[k]}</b></div>`).join('')}</div>
+        <div class="mbtns"><button class="btn btn--big" type="button" data-copy="ficha">COPIAR FICHA</button>${p.enlace ? `<a class="btn btn--ghost btn--big" href="${esc(p.enlace)}" target="_blank" rel="noopener">VER EN EL PROVEEDOR ↗</a>` : ''}</div>
+        <p class="hint">La ficha lleva todo lo que te pide tu inventario: pégala en la web del juego, misión 2.4.</p>
+      </div>`;
+    $('#ovl').hidden = false;
+    $('#modal').scrollTop = 0;
+    $('[data-x]', $('#modal')).focus();
+  }
+  function close() { $('#ovl').hidden = true; cur = null; }
+  $('#ovl').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget || e.target.closest('[data-x]')) { close(); return; }
+    const g = e.target.closest('[data-g]'); if (g) { setImg(gi + +g.dataset.g); return; }
+    const t = e.target.closest('[data-t]'); if (t) { setImg(+t.dataset.t); return; }
+    const b = e.target.closest('[data-copy]'); if (b && cur) doCopy(b.dataset.copy, cur);
+  });
+  document.addEventListener('keydown', (e) => {
+    if ($('#ovl').hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowRight') setImg(gi + 1);
+    if (e.key === 'ArrowLeft') setImg(gi - 1);
+  });
+
+  $('#foot').innerHTML = `<b>Nota (0-100)</b> = 24 % margen · 24 % ventas · 20 % poca competencia · 14 % envío rápido · 18 % valor percibido.
+    Margen = venta / coste. ${D.analizados ? `Se analizaron <b>${miles(D.analizados)}</b> productos del proveedor` : 'Productos del proveedor'}${cats.length ? ` en ${esc(cats.join(', '))}` : ''}${D.fecha ? `, a ${esc(D.fecha)}` : ''}.${envioA ? ` El envío es a ${esc(envioA)}, la región de tu cuenta del proveedor.` : ''}
+    <br><b>Cómo se usa:</b> pulsa <b>COPIAR FICHA</b> en el producto que te guste y pégala en tu inventario, en la web del juego
+    (<a href="https://recursos.skilio.com/dropshipping-videojuego/#inventario" target="_blank" rel="noopener">misión 2.4</a>). Así la importación usa los datos exactos del proveedor.`;
+  chips();
+  render();
+  /* #p=3 abre la ficha del puesto 3 */
+  const m = /p=(\d+)/.exec(location.hash);
+  if (m) open(P.find((p) => p.rank === +m[1]));
+})();
+</script>
+</body>
+</html>
